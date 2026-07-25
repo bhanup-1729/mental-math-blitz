@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Mental Math Blitz</title>
+<style>
+  :root{
+    --bg:#eef1f5;
+    --surface:#ffffff;
+    --groove:#dde2e9;
+    --ink:#182029;
+    --muted:#5c6774;
+    --accent:#b96a05;
+    --accent-ink:#ffffff;
+    --accent2:#1f9d72;
+    --danger:#d1453b;
+    --ring: 185,106,5;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#10151c;
+      --surface:#1a222c;
+      --groove:#232d39;
+      --ink:#eef1f5;
+      --muted:#8996a6;
+      --accent:#ffb020;
+      --accent-ink:#1b1204;
+      --accent2:#4ad9a0;
+      --danger:#ff6b6a;
+      --ring: 255,176,32;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#10151c; --surface:#1a222c; --groove:#232d39; --ink:#eef1f5; --muted:#8996a6;
+    --accent:#ffb020; --accent-ink:#1b1204; --accent2:#4ad9a0; --danger:#ff6b6a; --ring:255,176,32;
+  }
+  :root[data-theme="light"]{
+    --bg:#eef1f5; --surface:#ffffff; --groove:#dde2e9; --ink:#182029; --muted:#5c6774;
+    --accent:#b96a05; --accent-ink:#ffffff; --accent2:#1f9d72; --danger:#d1453b; --ring:185,106,5;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:Georgia,"Iowan Old Style","Palatino Linotype",serif;
+    display:flex;
+    justify-content:center;
+    min-height:100vh;
+    min-height:100dvh;
+    overflow-x:hidden;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .console{
+    width:100%;
+    max-width:760px;
+    padding:16px 16px calc(18px + env(safe-area-inset-bottom));
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    min-height:100vh;
+    min-height:100dvh;
+  }
+
+  .label-face{
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    font-weight:800;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .num-face{
+    font-family:ui-monospace,"SF Mono","Cascadia Code","Roboto Mono",Menlo,Consolas,monospace;
+    font-variant-numeric:tabular-nums;
+  }
+
+  /* header */
+  header{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .brand{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    min-width:0;
+  }
+  .brand .eyebrow{
+    font-size:10.5px;
+    color:var(--muted);
+  }
+  .brand h1{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    font-weight:800;
+    font-size:clamp(19px,5.6vw,26px);
+    letter-spacing:-.01em;
+    text-wrap:balance;
+  }
+  .brand h1 em{
+    font-style:normal;
+    color:var(--accent);
+  }
+  .score{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:7px 12px;
+    background:var(--surface);
+    border:1px solid var(--groove);
+    border-radius:10px;
+    flex-shrink:0;
+  }
+  .score .metric{display:flex;align-items:center;gap:6px;font-size:14px;}
+  .score .metric .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .score .hit .dot{background:var(--accent2);}
+  .score .miss .dot{background:var(--danger);}
+  .score .num-face{font-size:15px;font-weight:600;}
+
+  /* controls row */
+  .controls-row{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .pills{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+  .pill{
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    font-size:12px;
+    font-weight:600;
+    padding:7px 11px;
+    border-radius:100px;
+    border:1px solid var(--groove);
+    background:var(--surface);
+    color:var(--muted);
+    cursor:pointer;
+    white-space:nowrap;
+    transition:background .15s,color .15s,border-color .15s;
+  }
+  .pill[aria-pressed="true"]{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:var(--accent-ink);
+  }
+  .pill:focus-visible, button:focus-visible, select:focus-visible{
+    outline:2px solid rgba(var(--ring),.6);
+    outline-offset:2px;
+  }
+  .deck-select{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  select{
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    font-size:12px;
+    font-weight:600;
+    padding:7px 9px;
+    border-radius:8px;
+    border:1px solid var(--groove);
+    background:var(--surface);
+    color:var(--ink);
+    max-width:40vw;
+  }
+  .icon-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:34px;height:34px;
+    border-radius:8px;
+    border:1px solid var(--groove);
+    background:var(--surface);
+    color:var(--ink);
+    cursor:pointer;
+    font-size:16px;
+    flex-shrink:0;
+  }
+  .icon-btn:hover{border-color:var(--accent);}
+
+  /* progress rail */
+  .rail{
+    height:4px;
+    background:var(--groove);
+    border-radius:2px;
+    overflow:hidden;
+  }
+  .rail > div{
+    height:100%;
+    background:var(--accent);
+    transition:width .25s ease;
+  }
+  .rail-meta{
+    display:flex;
+    justify-content:space-between;
+    gap:8px;
+    font-size:10.5px;
+    color:var(--muted);
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  }
+  .rail-meta span:last-child{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  /* stage */
+  .stage{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:0;
+  }
+  .card{
+    width:100%;
+    background:var(--surface);
+    border:1px solid var(--groove);
+    border-radius:18px;
+    padding:clamp(18px,5vw,40px);
+    box-shadow:0 1px 0 rgba(0,0,0,.03), 0 12px 30px -18px rgba(0,0,0,.35);
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    cursor:pointer;
+    position:relative;
+    min-height:240px;
+  }
+  .card .type-tag{
+    align-self:flex-start;
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--accent);
+    background:color-mix(in srgb, var(--accent) 14%, transparent);
+    padding:4px 10px;
+    border-radius:100px;
+  }
+  .expr{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-width:0;
+    width:100%;
+  }
+  .expr .expr-inner{
+    text-align:center;
+    font-size:clamp(15px,5vw,28px);
+    line-height:1.7;
+    max-width:100%;
+  }
+  .expr .op{color:var(--accent);font-weight:700;padding:0 .16em;white-space:nowrap;}
+  .expr .frac{
+    display:inline-block;
+    white-space:nowrap;
+    font-variant-numeric:tabular-nums;
+  }
+  .expr .frac .slash{color:var(--muted);padding:0 .1em;}
+  .expr .paren{color:var(--muted);}
+  .expr .sup{font-size:.62em;vertical-align:super;white-space:nowrap;}
+  .expr .q-mark{white-space:nowrap;color:var(--muted);}
+
+  .answer-wrap{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:58px;
+  }
+  .answer{
+    font-family:ui-monospace,"SF Mono","Cascadia Code","Roboto Mono",Menlo,Consolas,monospace;
+    font-variant-numeric:tabular-nums;
+    font-size:clamp(24px,8vw,44px);
+    font-weight:700;
+    color:var(--accent2);
+    opacity:0;
+    transform:translateY(6px) scale(.98);
+    transition:opacity .18s ease, transform .18s ease;
+  }
+  .answer.shown{opacity:1;transform:translateY(0) scale(1);}
+  .hint{
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    font-size:12px;
+    color:var(--muted);
+    text-align:center;
+  }
+
+  /* dock */
+  .dock{
+    display:grid;
+    grid-template-columns:1fr 1.4fr 1fr;
+    gap:8px;
+  }
+  .dock button{
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    font-weight:700;
+    font-size:14px;
+    padding:14px 6px;
+    border-radius:12px;
+    border:1px solid var(--groove);
+    background:var(--surface);
+    color:var(--ink);
+    cursor:pointer;
+    min-height:52px;
+    -webkit-user-select:none;
+    user-select:none;
+  }
+  .dock button:active{transform:translateY(1px);}
+  .dock .primary{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:var(--accent-ink);
+  }
+  .dock button:disabled{opacity:.35;cursor:default;}
+
+  .verdict-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+  .verdict-row button{
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    font-weight:700;
+    font-size:14px;
+    padding:13px 6px;
+    border-radius:12px;
+    border:1px solid var(--groove);
+    background:var(--surface);
+    cursor:pointer;
+    min-height:48px;
+  }
+  .verdict-row .hit{color:var(--accent2);border-color:color-mix(in srgb, var(--accent2) 40%, var(--groove));}
+  .verdict-row .miss{color:var(--danger);border-color:color-mix(in srgb, var(--danger) 40%, var(--groove));}
+  .verdict-row[hidden]{display:none;}
+
+  footer{
+    text-align:center;
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    font-size:10.5px;
+    color:var(--muted);
+    padding:0 4px;
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .answer,.rail > div{transition:none;}
+  }
+
+  @media (max-width:380px){
+    .console{padding-left:12px;padding-right:12px;gap:10px;}
+    .score{padding:6px 9px;gap:8px;}
+    .score .metric{font-size:12.5px;}
+    .brand .eyebrow{font-size:9.5px;}
+    .card{gap:14px;min-height:220px;}
+    .dock button, .verdict-row button{font-size:13px;padding-left:4px;padding-right:4px;}
+  }
+</style>
+</head>
+<body>
+<div class="console">
+
+  <header>
+    <div class="brand">
+      <span class="eyebrow label-face">Flashcard Quiz Deck</span>
+      <h1>Mental Math <em>Blitz</em></h1>
+    </div>
+    <div class="score" aria-live="polite">
+      <span class="metric hit"><span class="dot"></span><span class="num-face" id="hitCount">0</span></span>
+      <span class="metric miss"><span class="dot"></span><span class="num-face" id="missCount">0</span></span>
+    </div>
+  </header>
+
+  <div class="controls-row">
+    <div class="pills" id="filterPills" role="group" aria-label="Filter by question type"></div>
+    <div class="deck-select">
+      <select id="deckSize" aria-label="Deck size">
+        <option value="100">100 cards</option>
+        <option value="200" selected>200 cards</option>
+        <option value="400">400 cards</option>
+      </select>
+      <button class="icon-btn" id="regenBtn" title="New random deck" aria-label="New random deck">&#8635;</button>
+    </div>
+  </div>
+
+  <div>
+    <div class="rail"><div id="railFill" style="width:0%"></div></div>
+    <div class="rail-meta">
+      <span id="posLabel">Card 1 / 200</span>
+      <span id="typeLabel">Twin Fractions</span>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="card" id="card" role="button" tabindex="0" aria-label="Tap to reveal the answer">
+      <span class="type-tag" id="typeTag">Twin Fractions</span>
+      <div class="expr" id="expr"></div>
+      <div class="answer-wrap">
+        <div class="answer num-face" id="answer"></div>
+      </div>
+      <div class="hint" id="hint">Tap the card, or press Space, to reveal</div>
+    </div>
+  </div>
+
+  <div class="verdict-row" id="verdictRow" hidden>
+    <button class="hit" id="gotItBtn">&#10003; Got it</button>
+    <button class="miss" id="missedBtn">&#10007; Missed it</button>
+  </div>
+
+  <div class="dock">
+    <button id="prevBtn" aria-label="Previous card">&#8592; Prev</button>
+    <button class="primary" id="revealBtn">Reveal</button>
+    <button id="nextBtn" aria-label="Next card">Next &#8594;</button>
+  </div>
+
+  <footer>Divisions always land clean &middot; squares stay two digits &middot; every multiply stays one digit &times; a bigger number</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+  function fmt(n){ return n.toLocaleString('en-US'); }
+
+  var TYPES = {
+    square: { key:"square", label:"Twin Fractions", tag:"Div &middot; Div &middot; Square" },
+    quick:  { key:"quick",  label:"Quick Multiply",  tag:"Multiply &middot; Divide" },
+    chain:  { key:"chain",  label:"Fraction Chain",  tag:"Divide &middot; Multiply &middot; Divide" }
+  };
+  var TYPE_ORDER = ["square","quick","chain"];
+
+  function makeDivision(minB,maxB,minQ,maxQ){
+    var b = randInt(minB,maxB);
+    var q = randInt(minQ,maxQ);
+    return { a: b*q, b: b, q: q };
+  }
+
+  function genSquare(){
+    var d1 = makeDivision(400000,999999,3,9);
+    var d2 = makeDivision(400000,999999,3,9);
+    var e = randInt(20,99);
+    var f = randInt(100,999);
+    var answer = d1.q*d2.q + e*e - f;
+    return {
+      type:"square",
+      answer:answer,
+      render:function(){
+        return divBlock(d1) + '<span class="op">&times;</span>' + divBlock(d2)
+          + '<span class="op">+</span>' + fmt(e) + '<span class="sup">2</span>'
+          + '<span class="op">&minus;</span>' + fmt(f)
+          + '<span class="q-mark"> = ?</span>';
+      }
+    };
+  }
+
+  function genQuick(){
+    var d = makeDivision(40000,99999,2,9);
+    var e = randInt(10,99);
+    var f = randInt(100,999);
+    var answer = e*d.q + f;
+    return {
+      type:"quick",
+      answer:answer,
+      render:function(){
+        return fmt(e) + '<span class="op">&times;</span>' + divBlock(d)
+          + '<span class="op">+</span>' + fmt(f)
+          + '<span class="q-mark"> = ?</span>';
+      }
+    };
+  }
+
+  function genChain(){
+    var d1 = makeDivision(40000,99999,3,9);
+    var d2 = makeDivision(40000,99999,3,9);
+    var e = randInt(10,99);
+    var f = randInt(100,999);
+    var answer = d1.q*e - d2.q + f;
+    return {
+      type:"chain",
+      answer:answer,
+      render:function(){
+        return divBlock(d1) + '<span class="op">&times;</span>' + fmt(e)
+          + '<span class="op">&minus;</span>' + divBlock(d2)
+          + '<span class="op">+</span>' + fmt(f)
+          + '<span class="q-mark"> = ?</span>';
+      }
+    };
+  }
+
+  function divBlock(d){
+    return '<span class="frac"><span class="paren">(</span>' + fmt(d.a)
+      + '<span class="slash"> / </span>' + fmt(d.b)
+      + '<span class="paren">)</span></span>';
+  }
+
+  var GENERATORS = { square: genSquare, quick: genQuick, chain: genChain };
+
+  function shuffle(arr){
+    for (var i = arr.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    return arr;
+  }
+
+  function buildDeck(count){
+    var deck = [];
+    for (var i=0;i<count;i++){
+      var key = TYPE_ORDER[i % TYPE_ORDER.length];
+      deck.push(GENERATORS[key]());
+    }
+    return shuffle(deck);
+  }
+
+  // state
+  var state = {
+    deck: [],
+    filter: "all",
+    index: 0,
+    revealed: false,
+    hits: 0,
+    misses: 0
+  };
+
+  var els = {
+    filterPills: document.getElementById("filterPills"),
+    deckSize: document.getElementById("deckSize"),
+    regenBtn: document.getElementById("regenBtn"),
+    railFill: document.getElementById("railFill"),
+    posLabel: document.getElementById("posLabel"),
+    typeLabel: document.getElementById("typeLabel"),
+    card: document.getElementById("card"),
+    typeTag: document.getElementById("typeTag"),
+    expr: document.getElementById("expr"),
+    answer: document.getElementById("answer"),
+    hint: document.getElementById("hint"),
+    verdictRow: document.getElementById("verdictRow"),
+    gotItBtn: document.getElementById("gotItBtn"),
+    missedBtn: document.getElementById("missedBtn"),
+    prevBtn: document.getElementById("prevBtn"),
+    nextBtn: document.getElementById("nextBtn"),
+    revealBtn: document.getElementById("revealBtn"),
+    hitCount: document.getElementById("hitCount"),
+    missCount: document.getElementById("missCount")
+  };
+
+  function buildPills(){
+    var frag = document.createDocumentFragment();
+    var all = document.createElement("button");
+    all.className = "pill"; all.textContent = "All"; all.setAttribute("aria-pressed", state.filter==="all");
+    all.addEventListener("click", function(){ setFilter("all"); });
+    frag.appendChild(all);
+    TYPE_ORDER.forEach(function(key){
+      var t = TYPES[key];
+      var b = document.createElement("button");
+      b.className = "pill";
+      b.textContent = t.label;
+      b.setAttribute("aria-pressed", state.filter===key);
+      b.addEventListener("click", function(){ setFilter(key); });
+      frag.appendChild(b);
+    });
+    els.filterPills.innerHTML = "";
+    els.filterPills.appendChild(frag);
+  }
+
+  function setFilter(key){
+    state.filter = key;
+    state.index = 0;
+    Array.prototype.forEach.call(els.filterPills.children, function(btn){
+      btn.setAttribute("aria-pressed", btn.textContent === (TYPES[key] ? TYPES[key].label : "All"));
+    });
+    render();
+  }
+
+  function currentView(){
+    if (state.filter === "all") return state.deck;
+    return state.deck.filter(function(q){ return q.type === state.filter; });
+  }
+
+  function render(){
+    var view = currentView();
+    if (view.length === 0){
+      els.expr.innerHTML = '<span class="expr-inner">No cards of this type &mdash; try Regenerate.</span>';
+      els.typeTag.textContent = "";
+      els.answer.textContent = "";
+      els.answer.classList.remove("shown");
+      els.posLabel.textContent = "0 / 0";
+      els.railFill.style.width = "0%";
+      els.verdictRow.hidden = true;
+      return;
+    }
+    if (state.index >= view.length) state.index = view.length - 1;
+    if (state.index < 0) state.index = 0;
+    var q = view[state.index];
+    els.typeTag.innerHTML = TYPES[q.type].tag;
+    els.expr.innerHTML = '<span class="expr-inner">' + q.render() + '</span>';
+    els.answer.textContent = fmt(q.answer);
+    els.answer.classList.toggle("shown", state.revealed);
+    els.hint.textContent = state.revealed ? "" : "Tap the card, or press Space, to reveal";
+    els.verdictRow.hidden = !state.revealed;
+    els.posLabel.textContent = "Card " + (state.index+1) + " / " + view.length;
+    els.typeLabel.textContent = TYPES[q.type].label;
+    els.railFill.style.width = Math.round(((state.index+1)/view.length)*100) + "%";
+    els.prevBtn.disabled = state.index === 0;
+    els.nextBtn.disabled = state.index === view.length - 1;
+    els.revealBtn.textContent = state.revealed ? "Hide" : "Reveal";
+  }
+
+  function reveal(force){
+    state.revealed = (typeof force === "boolean") ? force : !state.revealed;
+    render();
+  }
+
+  function goNext(){
+    var view = currentView();
+    if (state.index < view.length - 1){
+      state.index++;
+      state.revealed = false;
+      render();
+    }
+  }
+  function goPrev(){
+    if (state.index > 0){
+      state.index--;
+      state.revealed = false;
+      render();
+    }
+  }
+
+  function logVerdict(hit){
+    if (hit){ state.hits++; els.hitCount.textContent = state.hits; }
+    else { state.misses++; els.missCount.textContent = state.misses; }
+    goNext();
+  }
+
+  function regenerate(){
+    var count = parseInt(els.deckSize.value, 10);
+    state.deck = buildDeck(count);
+    state.index = 0;
+    state.revealed = false;
+    render();
+  }
+
+  // events
+  els.card.addEventListener("click", function(){ reveal(); });
+  els.card.addEventListener("keydown", function(e){
+    if (e.key === "Enter"){ reveal(); }
+  });
+  els.revealBtn.addEventListener("click", function(){ reveal(); });
+  els.prevBtn.addEventListener("click", goPrev);
+  els.nextBtn.addEventListener("click", goNext);
+  els.gotItBtn.addEventListener("click", function(){ logVerdict(true); });
+  els.missedBtn.addEventListener("click", function(){ logVerdict(false); });
+  els.regenBtn.addEventListener("click", regenerate);
+  els.deckSize.addEventListener("change", regenerate);
+
+  document.addEventListener("keydown", function(e){
+    if (e.target && (e.target.tagName === "SELECT")) return;
+    if (e.code === "Space"){ e.preventDefault(); reveal(); }
+    else if (e.key === "ArrowRight"){ goNext(); }
+    else if (e.key === "ArrowLeft"){ goPrev(); }
+  });
+
+  // touch swipe
+  var touchStartX = null;
+  els.card.addEventListener("touchstart", function(e){
+    touchStartX = e.changedTouches[0].clientX;
+  }, {passive:true});
+  els.card.addEventListener("touchend", function(e){
+    if (touchStartX === null) return;
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 60){
+      if (dx < 0) goNext(); else goPrev();
+    }
+    touchStartX = null;
+  }, {passive:true});
+
+  buildPills();
+  regenerate();
+})();
+</script>
+</body>
+</html>
