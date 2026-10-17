@@ -85,16 +85,8 @@
     gap:10px;
     flex-wrap:wrap;
   }
-  .brand{
-    display:flex;
-    flex-direction:column;
-    gap:2px;
-    min-width:0;
-  }
-  .brand .eyebrow{
-    font-size:10.5px;
-    color:var(--muted);
-  }
+  .brand{display:flex;flex-direction:column;gap:2px;min-width:0;}
+  .brand .eyebrow{font-size:10.5px;color:var(--muted);}
   .brand h1{
     margin:0;
     font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
@@ -103,10 +95,7 @@
     letter-spacing:-.01em;
     text-wrap:balance;
   }
-  .brand h1 em{
-    font-style:normal;
-    color:var(--accent);
-  }
+  .brand h1 em{font-style:normal;color:var(--accent);}
   .score{
     display:flex;
     align-items:center;
@@ -123,19 +112,17 @@
   .score .miss .dot{background:var(--danger);}
   .score .num-face{font-size:15px;font-weight:600;}
 
-  /* controls row */
+  /* filters */
   .controls-row{
     display:flex;
     gap:8px;
     flex-wrap:wrap;
-    align-items:center;
+    align-items:flex-start;
     justify-content:space-between;
   }
-  .pills{
-    display:flex;
-    gap:6px;
-    flex-wrap:wrap;
-  }
+  .filters{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1 1 280px;}
+  .pills{display:flex;gap:6px;flex-wrap:wrap;}
+  .pills[hidden]{display:none;}
   .pill{
     font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
     font-size:12px;
@@ -154,15 +141,17 @@
     border-color:var(--accent);
     color:var(--accent-ink);
   }
+  .pills.second .pill{font-size:11px;padding:5px 9px;}
+  .pills.second .pill[aria-pressed="true"]{
+    background:color-mix(in srgb, var(--accent) 16%, var(--surface));
+    border-color:var(--accent);
+    color:var(--accent);
+  }
   .pill:focus-visible, button:focus-visible, select:focus-visible{
     outline:2px solid rgba(var(--ring),.6);
     outline-offset:2px;
   }
-  .deck-select{
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
+  .deck-select{display:flex;align-items:center;gap:8px;}
   select{
     font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
     font-size:12px;
@@ -190,17 +179,8 @@
   .icon-btn:hover{border-color:var(--accent);}
 
   /* progress rail */
-  .rail{
-    height:4px;
-    background:var(--groove);
-    border-radius:2px;
-    overflow:hidden;
-  }
-  .rail > div{
-    height:100%;
-    background:var(--accent);
-    transition:width .25s ease;
-  }
+  .rail{height:4px;background:var(--groove);border-radius:2px;overflow:hidden;}
+  .rail > div{height:100%;background:var(--accent);transition:width .25s ease;}
   .rail-meta{
     display:flex;
     justify-content:space-between;
@@ -209,20 +189,10 @@
     color:var(--muted);
     font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
   }
-  .rail-meta span:last-child{
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-  }
+  .rail-meta span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
   /* stage */
-  .stage{
-    flex:1;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    min-height:0;
-  }
+  .stage{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;}
   .card{
     width:100%;
     background:var(--surface);
@@ -249,47 +219,40 @@
     padding:4px 10px;
     border-radius:100px;
   }
-  .expr{
-    flex:1;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    min-width:0;
-    width:100%;
-  }
+  .expr{flex:1;display:flex;align-items:center;justify-content:center;min-width:0;width:100%;}
   .expr .expr-inner{
     text-align:center;
     font-size:clamp(15px,5vw,28px);
     line-height:1.7;
     max-width:100%;
   }
-  .expr .op{color:var(--accent);font-weight:700;padding:0 .16em;white-space:nowrap;}
-  .expr .frac{
-    display:inline-block;
-    white-space:nowrap;
-    font-variant-numeric:tabular-nums;
+  .expr .expr-inner.wordy{
+    font-size:clamp(15px,4.4vw,22px);
+    line-height:1.55;
+    text-wrap:balance;
   }
+  .expr .op{color:var(--accent);font-weight:700;padding:0 .16em;white-space:nowrap;}
+  .expr .frac{display:inline-block;white-space:nowrap;font-variant-numeric:tabular-nums;}
   .expr .frac .slash{color:var(--muted);padding:0 .1em;}
   .expr .paren{color:var(--muted);}
   .expr .sup{font-size:.62em;vertical-align:super;white-space:nowrap;}
+  .expr .sub{font-size:.62em;vertical-align:sub;white-space:nowrap;}
   .expr .q-mark{white-space:nowrap;color:var(--muted);}
+  .expr .nw{white-space:nowrap;}
 
-  .answer-wrap{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    min-height:58px;
-  }
+  .answer-wrap{display:flex;align-items:center;justify-content:center;min-height:58px;}
   .answer{
     font-family:ui-monospace,"SF Mono","Cascadia Code","Roboto Mono",Menlo,Consolas,monospace;
     font-variant-numeric:tabular-nums;
     font-size:clamp(24px,8vw,44px);
     font-weight:700;
     color:var(--accent2);
+    text-align:center;
     opacity:0;
     transform:translateY(6px) scale(.98);
     transition:opacity .18s ease, transform .18s ease;
   }
+  .answer.long{font-size:clamp(17px,5vw,28px);}
   .answer.shown{opacity:1;transform:translateY(0) scale(1);}
   .hint{
     font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
@@ -299,11 +262,7 @@
   }
 
   /* dock */
-  .dock{
-    display:grid;
-    grid-template-columns:1fr 1.4fr 1fr;
-    gap:8px;
-  }
+  .dock{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:8px;}
   .dock button{
     font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
     font-weight:700;
@@ -319,18 +278,10 @@
     user-select:none;
   }
   .dock button:active{transform:translateY(1px);}
-  .dock .primary{
-    background:var(--accent);
-    border-color:var(--accent);
-    color:var(--accent-ink);
-  }
+  .dock .primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
   .dock button:disabled{opacity:.35;cursor:default;}
 
-  .verdict-row{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-  }
+  .verdict-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
   .verdict-row button{
     font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
     font-weight:700;
@@ -373,7 +324,7 @@
 
   <header>
     <div class="brand">
-      <span class="eyebrow label-face">Flashcard Quiz Deck</span>
+      <span class="eyebrow label-face" id="eyebrow">Flashcard Quiz Deck</span>
       <h1>Mental Math <em>Blitz</em></h1>
     </div>
     <div class="score" aria-live="polite">
@@ -383,12 +334,16 @@
   </header>
 
   <div class="controls-row">
-    <div class="pills" id="filterPills" role="group" aria-label="Filter by question type"></div>
+    <div class="filters">
+      <div class="pills" id="catPills" role="group" aria-label="Filter by category"></div>
+      <div class="pills second" id="typePills" role="group" aria-label="Filter by question type" hidden></div>
+    </div>
     <div class="deck-select">
       <select id="deckSize" aria-label="Deck size">
         <option value="100">100 cards</option>
-        <option value="200" selected>200 cards</option>
-        <option value="400">400 cards</option>
+        <option value="200">200 cards</option>
+        <option value="400" selected>400 cards</option>
+        <option value="1000">1,000 cards</option>
       </select>
       <button class="icon-btn" id="regenBtn" title="New random deck" aria-label="New random deck">&#8635;</button>
     </div>
@@ -397,14 +352,14 @@
   <div>
     <div class="rail"><div id="railFill" style="width:0%"></div></div>
     <div class="rail-meta">
-      <span id="posLabel">Card 1 / 200</span>
-      <span id="typeLabel">Twin Fractions</span>
+      <span id="posLabel">Card 1</span>
+      <span id="typeLabel"></span>
     </div>
   </div>
 
   <div class="stage">
     <div class="card" id="card" role="button" tabindex="0" aria-label="Tap to reveal the answer">
-      <span class="type-tag" id="typeTag">Twin Fractions</span>
+      <span class="type-tag" id="typeTag"></span>
       <div class="expr" id="expr"></div>
       <div class="answer-wrap">
         <div class="answer num-face" id="answer"></div>
@@ -424,89 +379,19 @@
     <button id="nextBtn" aria-label="Next card">Next &#8594;</button>
   </div>
 
-  <footer>Divisions always land clean &middot; squares stay two digits &middot; every multiply stays one digit &times; a bigger number</footer>
+  <footer>Every question is built so the answer comes out clean &mdash; no calculator needed</footer>
 </div>
 
 <script>
 (function(){
   "use strict";
 
+  /* ---------- helpers ---------- */
   function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+  function pick(a){ return a[randInt(0,a.length-1)]; }
   function fmt(n){ return n.toLocaleString('en-US'); }
-
-  var TYPES = {
-    square: { key:"square", label:"Twin Fractions", tag:"Div &middot; Div &middot; Square" },
-    quick:  { key:"quick",  label:"Quick Multiply",  tag:"Multiply &middot; Divide" },
-    chain:  { key:"chain",  label:"Fraction Chain",  tag:"Divide &middot; Multiply &middot; Divide" }
-  };
-  var TYPE_ORDER = ["square","quick","chain"];
-
-  function makeDivision(minB,maxB,minQ,maxQ){
-    var b = randInt(minB,maxB);
-    var q = randInt(minQ,maxQ);
-    return { a: b*q, b: b, q: q };
-  }
-
-  function genSquare(){
-    var d1 = makeDivision(400000,999999,3,9);
-    var d2 = makeDivision(400000,999999,3,9);
-    var e = randInt(20,99);
-    var f = randInt(100,999);
-    var answer = d1.q*d2.q + e*e - f;
-    return {
-      type:"square",
-      answer:answer,
-      render:function(){
-        return divBlock(d1) + '<span class="op">&times;</span>' + divBlock(d2)
-          + '<span class="op">+</span>' + fmt(e) + '<span class="sup">2</span>'
-          + '<span class="op">&minus;</span>' + fmt(f)
-          + '<span class="q-mark"> = ?</span>';
-      }
-    };
-  }
-
-  function genQuick(){
-    var d = makeDivision(40000,99999,2,9);
-    var e = randInt(10,99);
-    var f = randInt(100,999);
-    var answer = e*d.q + f;
-    return {
-      type:"quick",
-      answer:answer,
-      render:function(){
-        return fmt(e) + '<span class="op">&times;</span>' + divBlock(d)
-          + '<span class="op">+</span>' + fmt(f)
-          + '<span class="q-mark"> = ?</span>';
-      }
-    };
-  }
-
-  function genChain(){
-    var d1 = makeDivision(40000,99999,3,9);
-    var d2 = makeDivision(40000,99999,3,9);
-    var e = randInt(10,99);
-    var f = randInt(100,999);
-    var answer = d1.q*e - d2.q + f;
-    return {
-      type:"chain",
-      answer:answer,
-      render:function(){
-        return divBlock(d1) + '<span class="op">&times;</span>' + fmt(e)
-          + '<span class="op">&minus;</span>' + divBlock(d2)
-          + '<span class="op">+</span>' + fmt(f)
-          + '<span class="q-mark"> = ?</span>';
-      }
-    };
-  }
-
-  function divBlock(d){
-    return '<span class="frac"><span class="paren">(</span>' + fmt(d.a)
-      + '<span class="slash"> / </span>' + fmt(d.b)
-      + '<span class="paren">)</span></span>';
-  }
-
-  var GENERATORS = { square: genSquare, quick: genQuick, chain: genChain };
-
+  function sfmt(n){ return fmt(n).replace('-', '−'); }
+  function gcd(a,b){ while(b){ var t=b; b=a%b; a=t; } return a; }
   function shuffle(arr){
     for (var i = arr.length - 1; i > 0; i--){
       var j = Math.floor(Math.random()*(i+1));
@@ -514,28 +399,291 @@
     }
     return arr;
   }
+  function isPrime(n){
+    if (n < 2) return false;
+    for (var i=2; i*i<=n; i++){ if (n % i === 0) return false; }
+    return true;
+  }
 
+  function op(s){ return '<span class="op">' + s + '</span>'; }
+  function sup(s){ return '<span class="sup">' + s + '</span>'; }
+  function sub(s){ return '<span class="sub">' + s + '</span>'; }
+  function q(){ return '<span class="q-mark"> = ?</span>'; }
+  var TIMES = '&times;', MINUS = '&minus;', PLUS = '+', DIVIDE = '&divide;';
+
+  function mkDiv(minB,maxB,minQ,maxQ){
+    var b = randInt(minB,maxB);
+    var qq = randInt(minQ,maxQ);
+    return { a: b*qq, b: b, q: qq };
+  }
+  function frac(d){
+    return '<span class="frac"><span class="paren">(</span>' + fmt(d.a)
+      + '<span class="slash"> / </span>' + fmt(d.b)
+      + '<span class="paren">)</span></span>';
+  }
+
+  /* ---------- categories & question types ---------- */
+  var CATS = [
+    { id:"bigfrac", label:"Big Fractions" },
+    { id:"powers",  label:"Powers & Roots" },
+    { id:"percent", label:"Percent & Decimals" },
+    { id:"number",  label:"Number Sense" },
+    { id:"algebra", label:"Algebra & Series" },
+    { id:"arith",   label:"Arithmetic" },
+    { id:"word",    label:"Word Problems" }
+  ];
+  function catLabel(id){
+    for (var i=0;i<CATS.length;i++){ if (CATS[i].id === id) return CATS[i].label; }
+    return id;
+  }
+
+  var TYPES = [];
+  function add(id, cat, label, gen){ TYPES.push({ id:id, cat:cat, label:label, gen:gen }); }
+
+  /* Big Fractions: huge numbers that divide down to single digits */
+  add("square","bigfrac","Twin Fractions",function(){
+    var d1 = mkDiv(400000,999999,3,9), d2 = mkDiv(400000,999999,3,9);
+    var e = randInt(20,99), f = randInt(100,999);
+    return { html: frac(d1)+op(TIMES)+frac(d2)+op(PLUS)+fmt(e)+sup('2')+op(MINUS)+fmt(f)+q(),
+             ans: sfmt(d1.q*d2.q + e*e - f) };
+  });
+  add("quick","bigfrac","Quick Multiply",function(){
+    var d = mkDiv(40000,99999,2,9);
+    var e = randInt(10,99), f = randInt(100,999);
+    return { html: fmt(e)+op(TIMES)+frac(d)+op(PLUS)+fmt(f)+q(), ans: sfmt(e*d.q + f) };
+  });
+  add("chain","bigfrac","Fraction Chain",function(){
+    var d1 = mkDiv(40000,99999,3,9), d2 = mkDiv(40000,99999,3,9);
+    var e = randInt(10,99), f = randInt(100,999);
+    return { html: frac(d1)+op(TIMES)+fmt(e)+op(MINUS)+frac(d2)+op(PLUS)+fmt(f)+q(),
+             ans: sfmt(d1.q*e - d2.q + f) };
+  });
+
+  /* Powers & Roots */
+  add("sq2","powers","Square",function(){
+    var n = randInt(11,99);
+    return { html: fmt(n)+sup('2')+q(), ans: sfmt(n*n) };
+  });
+  add("sqnear","powers","Square near 100",function(){
+    var n; do { n = randInt(92,108); } while (n === 100);
+    return { html: fmt(n)+sup('2')+q(), ans: sfmt(n*n) };
+  });
+  add("cube","powers","Cube",function(){
+    var n = randInt(3,25);
+    return { html: fmt(n)+sup('3')+q(), ans: sfmt(n*n*n) };
+  });
+  add("sqrt","powers","Square root",function(){
+    var m = randInt(12,99);
+    return { html: '&radic;<span class="nw">'+fmt(m*m)+'</span>'+q(), ans: sfmt(m) };
+  });
+  add("cbrt","powers","Cube root",function(){
+    var m = randInt(3,30);
+    return { html: sup('3')+'&radic;<span class="nw">'+fmt(m*m*m)+'</span>'+q(), ans: sfmt(m) };
+  });
+  var POWER_TABLE = [[2,8,16],[3,4,9],[4,3,7],[5,3,6],[6,3,5],[7,3,5],[8,3,5],[9,3,5],[11,3,4],[12,3,4]];
+  add("power","powers","Powers",function(){
+    var row = pick(POWER_TABLE);
+    var base = row[0], e = randInt(row[1], row[2]);
+    return { html: base+sup(e)+q(), ans: sfmt(Math.pow(base,e)) };
+  });
+
+  /* Percent & Decimals */
+  add("pctof","percent","Percent of",function(){
+    var p = pick([5,10,15,20,25,30,35,40,45,50,60,65,70,75,80,85,90,120,150]);
+    var N = 20*randInt(5,150);
+    return { html: p+'% of '+fmt(N)+q(), ans: sfmt(N*p/100) };
+  });
+  add("pctchange","percent","Percent change",function(){
+    var up = Math.random() < 0.5;
+    var p = pick([5,10,15,20,25,30,40,50,60,75]);
+    var N = 20*randInt(5,100);
+    return { html: fmt(N)+(up ? ' increased by ' : ' decreased by ')+p+'%'+q(),
+             ans: sfmt(N*(up ? 100+p : 100-p)/100) };
+  });
+  add("findwhole","percent","Find the whole",function(){
+    var p = pick([5,10,20,25,40,50,60,75,80]);
+    var whole = 20*randInt(5,100);
+    var part = whole*p/100;
+    return { html: p+'% of <span class="q-mark">?</span> = '+fmt(part), ans: sfmt(whole) };
+  });
+  add("fracdec","percent","Fraction to decimal",function(){
+    var d = pick([2,4,5,8,16,20,25,32]);
+    var n;
+    do { n = randInt(1,d-1); } while (gcd(n,d) !== 1);
+    return { html: '<span class="frac">'+n+'<span class="slash"> / </span>'+d+'</span>'+q(),
+             ans: String(n/d) };
+  });
+  var DEC_TABLE = [[0.25,4],[0.75,4],[0.5,2],[1.5,2],[2.5,2],[0.2,5],[0.4,5],[0.6,5],[0.8,5],[1.2,5],[1.25,4],[0.125,8],[0.375,8],[0.05,20]];
+  add("decmul","percent","Decimal multiply",function(){
+    var row = pick(DEC_TABLE), m = row[0], s = row[1];
+    var N = s*randInt(3, Math.floor(900/s));
+    return { html: m+op(TIMES)+fmt(N)+q(), ans: sfmt(Math.round(m*N*1000)/1000) };
+  });
+
+  /* Number Sense */
+  add("remainder","number","Remainder",function(){
+    var d = pick([6,7,8,9,11,12,13]);
+    var N = randInt(150,9999);
+    return { html: 'Remainder of '+fmt(N)+' '+DIVIDE+' '+d+q(), ans: sfmt(N % d) };
+  });
+  add("hcf","number","HCF",function(){
+    var g = randInt(2,15), m, n;
+    do { m = randInt(2,12); n = randInt(2,12); } while (m === n || gcd(m,n) !== 1);
+    return { html: 'HCF('+(g*m)+', '+(g*n)+')'+q(), ans: sfmt(g) };
+  });
+  add("lcm","number","LCM",function(){
+    var g = randInt(2,9), m, n;
+    do { m = randInt(2,9); n = randInt(2,9); } while (m === n || gcd(m,n) !== 1);
+    return { html: 'LCM('+(g*m)+', '+(g*n)+')'+q(), ans: sfmt(g*m*n) };
+  });
+  var PRIMES = [], TRICKY = [], COMPOSITES = [];
+  (function(){
+    for (var n=11; n<=149; n++){
+      if (isPrime(n)) PRIMES.push(n);
+      else {
+        if (n >= 21) COMPOSITES.push(n);
+        if (n % 2 && n % 3 && n % 5) TRICKY.push(n);
+      }
+    }
+  })();
+  add("prime","number","Prime or not",function(){
+    var n;
+    if (Math.random() < 0.45) n = pick(PRIMES);
+    else n = Math.random() < 0.5 ? pick(TRICKY) : pick(COMPOSITES);
+    var ans;
+    if (isPrime(n)) ans = "Prime";
+    else { var a = 2; while (n % a) a++; ans = "Not prime ("+a+" &times; "+(n/a)+")"; }
+    return { html: 'Is <strong>'+n+'</strong> prime?', ans: ans };
+  });
+  add("digitalroot","number","Digital root",function(){
+    var N = randInt(1000,999999);
+    return { html: 'Digital root of '+fmt(N)+q(), ans: String(1 + ((N-1) % 9)) };
+  });
+  add("binary","number","Binary to decimal",function(){
+    var bits = randInt(5,8);
+    var val = randInt(1<<(bits-1), (1<<bits)-1);
+    var s = val.toString(2), g = '';
+    for (var i=0;i<s.length;i++){
+      if (i > 0 && (s.length - i) % 4 === 0) g += ' ';
+      g += s.charAt(i);
+    }
+    return { html: '<span class="nw">'+g+'</span>'+sub('2')+q(), ans: String(val) };
+  });
+
+  /* Algebra & Series */
+  add("linear","algebra","Solve for x",function(){
+    var a = randInt(2,9), x = randInt(3,60), b = randInt(1,60);
+    var plus = Math.random() < 0.5;
+    if (!plus && b >= a*x) b = randInt(1, a*x-1);
+    var c = plus ? a*x + b : a*x - b;
+    return { html: a+'<i>x</i> '+op(plus ? PLUS : MINUS)+' '+b+' = '+fmt(c)
+                   +'<span class="q-mark">  &rarr;  <i>x</i> = ?</span>',
+             ans: String(x) };
+  });
+  add("series","algebra","Series sum",function(){
+    var v = randInt(1,3), n, html, ans;
+    if (v === 1){ n = randInt(10,100); html = '1 + 2 + 3 + &hellip; + '+n; ans = n*(n+1)/2; }
+    else if (v === 2){ n = randInt(8,40); html = '1 + 3 + 5 + &hellip; + '+(2*n-1); ans = n*n; }
+    else { n = randInt(10,50); html = '2 + 4 + 6 + &hellip; + '+(2*n); ans = n*(n+1); }
+    return { html: html+q(), ans: sfmt(ans) };
+  });
+  add("average","algebra","Average",function(){
+    var m = randInt(50,99), ds = [], sum = 0, i;
+    for (i=0;i<4;i++){ var d = randInt(-12,12); ds.push(d); sum += d; }
+    ds.push(-sum);
+    var nums = shuffle(ds.map(function(d){ return m + d; }));
+    return { html: 'Average of '+nums.join(', ')+q(), ans: String(m) };
+  });
+
+  /* Arithmetic */
+  add("bodmas","arith","BODMAS",function(){
+    var b = randInt(2,9), t = randInt(2,12);
+    var divs = [2,3,4,5,6,7,8,9].filter(function(e){ return (b*t) % e === 0; });
+    var e = pick(divs);
+    var d = randInt(1,30), c = d + t;
+    var a = randInt(10,90);
+    var mid = b*t/e;
+    var f = randInt(1, Math.min(30, a+mid-1));
+    return { html: a+op(PLUS)+b+op(TIMES)+'('+c+op(MINUS)+d+')'+op(DIVIDE)+e+op(MINUS)+f+q(),
+             ans: sfmt(a + mid - f) };
+  });
+  add("addsub","arith","Add & subtract",function(){
+    var A, B, C;
+    do {
+      var k = randInt(2,9);
+      var s = pick([1,2,3,4,5,6,7,8,9,11,12,13,14,15,21,22,25,31,49,51,99]);
+      C = k*1000 + (Math.random() < 0.5 ? -s : s);
+      A = randInt(1500,9500);
+      B = randInt(1100,9500);
+    } while (A + B - C < 500);
+    return { html: fmt(A)+op(PLUS)+fmt(B)+op(MINUS)+fmt(C)+q(), ans: sfmt(A+B-C) };
+  });
+  add("trickmul","arith","Shortcut multiply",function(){
+    var m = pick([5,9,11,11,15,25,99,101]), N;
+    if (m === 5 || m === 9) N = randInt(101,999);
+    else if (m === 11) N = randInt(12,999);
+    else N = randInt(12,99);
+    return { html: fmt(N)+op(TIMES)+m+q(), ans: sfmt(N*m) };
+  });
+  add("division","arith","Clean division",function(){
+    var d = pick([3,4,6,7,8,9,12,15,16,25]);
+    var qq = randInt(20, d >= 12 ? 400 : 999);
+    return { html: fmt(d*qq)+op(DIVIDE)+d+q(), ans: sfmt(qq) };
+  });
+  add("negatives","arith","Negative numbers",function(){
+    var x, y, z, negs;
+    function sv(){ return (Math.random() < 0.5 ? -1 : 1) * randInt(10,99); }
+    function par(v){ return v < 0 ? '(&minus;'+(-v)+')' : String(v); }
+    do { x = sv(); y = sv(); z = sv(); negs = (x<0)+(y<0)+(z<0); } while (negs < 2);
+    return { html: sfmt(x)+op(PLUS)+par(y)+op(MINUS)+par(z)+q(), ans: sfmt(x + y - z) };
+  });
+
+  /* Word Problems */
+  add("speed","word","Speed, distance, time",function(){
+    var v = 5*randInt(6,24), t = randInt(2,9), dist = v*t, r = randInt(1,3), html, ans;
+    if (r === 1){ html = 'A car travels at '+v+' km/h for '+t+' hours. How far does it go?'; ans = dist+' km'; }
+    else if (r === 2){ html = 'A train covers '+fmt(dist)+' km in '+t+' hours. What is its speed?'; ans = v+' km/h'; }
+    else { html = 'A bus goes '+fmt(dist)+' km at '+v+' km/h. How many hours does it take?'; ans = t+' hours'; }
+    return { html: html, ans: ans, wordy: true };
+  });
+  add("unitrate","word","Unit rate",function(){
+    var item = pick(['notebooks','pens','tickets','apples','mugs','bottles']);
+    var a = randInt(3,12), p = randInt(7,99), n;
+    do { n = randInt(5,12); } while (n === a);
+    return { html: a+' '+item+' cost '+fmt(a*p)+'. How much do '+n+' cost?', ans: sfmt(n*p), wordy: true };
+  });
+  add("discount","word","Discount & profit",function(){
+    var P = 20*randInt(10,100), html, ans;
+    if (Math.random() < 0.5){
+      var d = pick([10,15,20,25,30,40,50]);
+      html = 'A jacket is marked '+fmt(P)+' with '+d+'% off. What is the sale price?';
+      ans = P*(100-d)/100;
+    } else {
+      var p = pick([5,10,15,20,25,30,40,50]);
+      html = 'Bought at '+fmt(P)+' and sold at a '+p+'% profit. What is the selling price?';
+      ans = P*(100+p)/100;
+    }
+    return { html: html, ans: sfmt(ans), wordy: true };
+  });
+
+  /* ---------- deck ---------- */
   function buildDeck(count){
+    var order = shuffle(TYPES.slice());
     var deck = [];
     for (var i=0;i<count;i++){
-      var key = TYPE_ORDER[i % TYPE_ORDER.length];
-      deck.push(GENERATORS[key]());
+      var t = order[i % order.length];
+      var o = t.gen();
+      deck.push({ typeId:t.id, cat:t.cat, label:t.label, html:o.html, ans:o.ans, wordy:!!o.wordy });
     }
     return shuffle(deck);
   }
 
-  // state
-  var state = {
-    deck: [],
-    filter: "all",
-    index: 0,
-    revealed: false,
-    hits: 0,
-    misses: 0
-  };
+  /* ---------- state ---------- */
+  var state = { deck: [], cat: "all", type: "all", index: 0, revealed: false, hits: 0, misses: 0 };
 
   var els = {
-    filterPills: document.getElementById("filterPills"),
+    catPills: document.getElementById("catPills"),
+    typePills: document.getElementById("typePills"),
     deckSize: document.getElementById("deckSize"),
     regenBtn: document.getElementById("regenBtn"),
     railFill: document.getElementById("railFill"),
@@ -553,65 +701,80 @@
     nextBtn: document.getElementById("nextBtn"),
     revealBtn: document.getElementById("revealBtn"),
     hitCount: document.getElementById("hitCount"),
-    missCount: document.getElementById("missCount")
+    missCount: document.getElementById("missCount"),
+    eyebrow: document.getElementById("eyebrow")
   };
+
+  function makePill(text, pressed, onClick){
+    var b = document.createElement("button");
+    b.className = "pill";
+    b.textContent = text;
+    b.setAttribute("aria-pressed", pressed ? "true" : "false");
+    b.addEventListener("click", onClick);
+    return b;
+  }
 
   function buildPills(){
     var frag = document.createDocumentFragment();
-    var all = document.createElement("button");
-    all.className = "pill"; all.textContent = "All"; all.setAttribute("aria-pressed", state.filter==="all");
-    all.addEventListener("click", function(){ setFilter("all"); });
-    frag.appendChild(all);
-    TYPE_ORDER.forEach(function(key){
-      var t = TYPES[key];
-      var b = document.createElement("button");
-      b.className = "pill";
-      b.textContent = t.label;
-      b.setAttribute("aria-pressed", state.filter===key);
-      b.addEventListener("click", function(){ setFilter(key); });
-      frag.appendChild(b);
+    frag.appendChild(makePill("All", state.cat === "all", function(){ setCat("all"); }));
+    CATS.forEach(function(c){
+      frag.appendChild(makePill(c.label, state.cat === c.id, function(){ setCat(c.id); }));
     });
-    els.filterPills.innerHTML = "";
-    els.filterPills.appendChild(frag);
+    els.catPills.innerHTML = "";
+    els.catPills.appendChild(frag);
+
+    els.typePills.innerHTML = "";
+    if (state.cat === "all"){ els.typePills.hidden = true; return; }
+    var f2 = document.createDocumentFragment();
+    f2.appendChild(makePill("Every type", state.type === "all", function(){ setType("all"); }));
+    TYPES.filter(function(t){ return t.cat === state.cat; }).forEach(function(t){
+      f2.appendChild(makePill(t.label, state.type === t.id, function(){ setType(t.id); }));
+    });
+    els.typePills.appendChild(f2);
+    els.typePills.hidden = false;
   }
 
-  function setFilter(key){
-    state.filter = key;
-    state.index = 0;
-    Array.prototype.forEach.call(els.filterPills.children, function(btn){
-      btn.setAttribute("aria-pressed", btn.textContent === (TYPES[key] ? TYPES[key].label : "All"));
-    });
-    render();
+  function setCat(id){
+    state.cat = id; state.type = "all"; state.index = 0; state.revealed = false;
+    buildPills(); render();
+  }
+  function setType(id){
+    state.type = id; state.index = 0; state.revealed = false;
+    buildPills(); render();
   }
 
   function currentView(){
-    if (state.filter === "all") return state.deck;
-    return state.deck.filter(function(q){ return q.type === state.filter; });
+    return state.deck.filter(function(c){
+      return (state.cat === "all" || c.cat === state.cat) && (state.type === "all" || c.typeId === state.type);
+    });
   }
 
   function render(){
     var view = currentView();
     if (view.length === 0){
-      els.expr.innerHTML = '<span class="expr-inner">No cards of this type &mdash; try Regenerate.</span>';
+      els.expr.innerHTML = '<span class="expr-inner">No cards of this type in the deck &mdash; try a bigger deck or tap regenerate.</span>';
       els.typeTag.textContent = "";
       els.answer.textContent = "";
       els.answer.classList.remove("shown");
       els.posLabel.textContent = "0 / 0";
+      els.typeLabel.textContent = "";
       els.railFill.style.width = "0%";
       els.verdictRow.hidden = true;
+      els.prevBtn.disabled = true; els.nextBtn.disabled = true;
       return;
     }
     if (state.index >= view.length) state.index = view.length - 1;
     if (state.index < 0) state.index = 0;
-    var q = view[state.index];
-    els.typeTag.innerHTML = TYPES[q.type].tag;
-    els.expr.innerHTML = '<span class="expr-inner">' + q.render() + '</span>';
-    els.answer.textContent = fmt(q.answer);
+    var c = view[state.index];
+    els.typeTag.textContent = c.label;
+    els.expr.innerHTML = '<span class="expr-inner' + (c.wordy ? ' wordy' : '') + '">' + c.html + '</span>';
+    els.answer.innerHTML = c.ans;
+    els.answer.classList.toggle("long", els.answer.textContent.length > 12);
     els.answer.classList.toggle("shown", state.revealed);
     els.hint.textContent = state.revealed ? "" : "Tap the card, or press Space, to reveal";
     els.verdictRow.hidden = !state.revealed;
     els.posLabel.textContent = "Card " + (state.index+1) + " / " + view.length;
-    els.typeLabel.textContent = TYPES[q.type].label;
+    els.typeLabel.textContent = catLabel(c.cat);
     els.railFill.style.width = Math.round(((state.index+1)/view.length)*100) + "%";
     els.prevBtn.disabled = state.index === 0;
     els.nextBtn.disabled = state.index === view.length - 1;
@@ -622,29 +785,18 @@
     state.revealed = (typeof force === "boolean") ? force : !state.revealed;
     render();
   }
-
   function goNext(){
     var view = currentView();
-    if (state.index < view.length - 1){
-      state.index++;
-      state.revealed = false;
-      render();
-    }
+    if (state.index < view.length - 1){ state.index++; state.revealed = false; render(); }
   }
   function goPrev(){
-    if (state.index > 0){
-      state.index--;
-      state.revealed = false;
-      render();
-    }
+    if (state.index > 0){ state.index--; state.revealed = false; render(); }
   }
-
   function logVerdict(hit){
     if (hit){ state.hits++; els.hitCount.textContent = state.hits; }
     else { state.misses++; els.missCount.textContent = state.misses; }
     goNext();
   }
-
   function regenerate(){
     var count = parseInt(els.deckSize.value, 10);
     state.deck = buildDeck(count);
@@ -653,11 +805,9 @@
     render();
   }
 
-  // events
+  /* ---------- events ---------- */
   els.card.addEventListener("click", function(){ reveal(); });
-  els.card.addEventListener("keydown", function(e){
-    if (e.key === "Enter"){ reveal(); }
-  });
+  els.card.addEventListener("keydown", function(e){ if (e.key === "Enter"){ reveal(); } });
   els.revealBtn.addEventListener("click", function(){ reveal(); });
   els.prevBtn.addEventListener("click", goPrev);
   els.nextBtn.addEventListener("click", goNext);
@@ -673,20 +823,16 @@
     else if (e.key === "ArrowLeft"){ goPrev(); }
   });
 
-  // touch swipe
   var touchStartX = null;
-  els.card.addEventListener("touchstart", function(e){
-    touchStartX = e.changedTouches[0].clientX;
-  }, {passive:true});
+  els.card.addEventListener("touchstart", function(e){ touchStartX = e.changedTouches[0].clientX; }, {passive:true});
   els.card.addEventListener("touchend", function(e){
     if (touchStartX === null) return;
     var dx = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(dx) > 60){
-      if (dx < 0) goNext(); else goPrev();
-    }
+    if (Math.abs(dx) > 60){ if (dx < 0) goNext(); else goPrev(); }
     touchStartX = null;
   }, {passive:true});
 
+  els.eyebrow.textContent = "Flashcard Quiz Deck · " + TYPES.length + " question types";
   buildPills();
   regenerate();
 })();
