@@ -109,12 +109,6 @@
   .gen-btn .spin{display:inline-block;font-size:19px;line-height:1;}
   .gen-btn.rolling .spin{animation:spin .6s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
-  .gen-stat{
-    display:flex;flex-direction:column;align-items:flex-end;gap:2px;
-    min-width:84px;
-  }
-  .gen-stat .n{font-size:26px;font-weight:700;line-height:1;}
-  .gen-stat .l{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
   .rules{display:flex;flex-wrap:wrap;gap:6px;}
   .rule{
     font-size:11px;
@@ -218,10 +212,6 @@
   <section class="generator sans" aria-label="Random question generator">
     <div class="gen-row">
       <button class="gen-btn" id="genBtn" type="button"><span class="spin" aria-hidden="true">&#8635;</span><span id="genLabel">Generate question</span></button>
-      <div class="gen-stat" aria-live="polite">
-        <span class="n mono" id="genCount">0</span>
-        <span class="l">generated</span>
-      </div>
     </div>
     <div class="rules">
       <span class="rule mono"><b>2d</b> &times; (<b>6d</b> &divide; <b>5d</b>) + <b>3d</b></span>
@@ -293,7 +283,6 @@
     hint: document.getElementById("hint"),
     genBtn: document.getElementById("genBtn"),
     genLabel: document.getElementById("genLabel"),
-    genCount: document.getElementById("genCount"),
     prevBtn: document.getElementById("prevBtn"),
     nextBtn: document.getElementById("nextBtn"),
     revealBtn: document.getElementById("revealBtn")
@@ -314,7 +303,6 @@
     els.answer.textContent = fmt(p.ans);
     els.answer.classList.toggle("shown", revealed);
     els.hint.textContent = revealed ? "" : "Tap the card, or press Space, to reveal";
-    els.genCount.textContent = fmt(history.length);
     els.prevBtn.disabled = index <= 0;
     els.revealBtn.textContent = revealed ? "Hide" : "Reveal";
   }
