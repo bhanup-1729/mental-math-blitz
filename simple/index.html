@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Mental Math Blitz — Simple</title>
+<style>
+  :root{
+    --bg:#eef1f5;
+    --surface:#ffffff;
+    --groove:#dde2e9;
+    --ink:#182029;
+    --muted:#5c6774;
+    --accent:#b96a05;
+    --accent-ink:#ffffff;
+    --accent2:#1f9d72;
+    --ring: 185,106,5;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#10151c; --surface:#1a222c; --groove:#232d39; --ink:#eef1f5; --muted:#8996a6;
+      --accent:#ffb020; --accent-ink:#1b1204; --accent2:#4ad9a0; --ring:255,176,32;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#10151c; --surface:#1a222c; --groove:#232d39; --ink:#eef1f5; --muted:#8996a6;
+    --accent:#ffb020; --accent-ink:#1b1204; --accent2:#4ad9a0; --ring:255,176,32;
+  }
+  :root[data-theme="light"]{
+    --bg:#eef1f5; --surface:#ffffff; --groove:#dde2e9; --ink:#182029; --muted:#5c6774;
+    --accent:#b96a05; --accent-ink:#ffffff; --accent2:#1f9d72; --ring:185,106,5;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:Georgia,"Iowan Old Style","Palatino Linotype",serif;
+    display:flex;
+    justify-content:center;
+    min-height:100vh;
+    min-height:100dvh;
+    overflow-x:hidden;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .sans{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;}
+  .mono{
+    font-family:ui-monospace,"SF Mono","Cascadia Code","Roboto Mono",Menlo,Consolas,monospace;
+    font-variant-numeric:tabular-nums;
+  }
+
+  .page{
+    width:100%;
+    max-width:820px;
+    padding:18px 16px calc(18px + env(safe-area-inset-bottom));
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    min-height:100vh;
+    min-height:100dvh;
+  }
+
+  header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .eyebrow{
+    font-size:10.5px;
+    font-weight:800;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  h1{
+    margin:2px 0 0;
+    font-weight:800;
+    font-size:clamp(20px,5.6vw,28px);
+    letter-spacing:-.01em;
+  }
+  h1 em{font-style:normal;color:var(--accent);}
+  .tools{display:flex;align-items:center;gap:8px;}
+  select{
+    font-size:12.5px;
+    font-weight:600;
+    padding:8px 10px;
+    border-radius:8px;
+    border:1px solid var(--groove);
+    background:var(--surface);
+    color:var(--ink);
+  }
+  .icon-btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border-radius:8px;
+    border:1px solid var(--groove);background:var(--surface);color:var(--ink);
+    cursor:pointer;font-size:16px;
+  }
+  .icon-btn:hover{border-color:var(--accent);}
+  select:focus-visible{outline:2px solid rgba(var(--ring),.6);outline-offset:2px;}
+
+  .progress{display:flex;flex-direction:column;gap:6px;}
+  .rail{height:6px;background:var(--groove);border-radius:3px;overflow:hidden;}
+  .rail > div{height:100%;width:0;background:var(--accent);border-radius:3px;transition:width .25s ease;}
+  .counter{
+    display:flex;justify-content:space-between;
+    font-size:12px;
+    font-weight:600;
+    color:var(--muted);
+  }
+
+  .stage{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;}
+  .card{
+    width:100%;
+    background:var(--surface);
+    border:1px solid var(--groove);
+    border-radius:18px;
+    padding:clamp(20px,5vw,44px);
+    box-shadow:0 1px 0 rgba(0,0,0,.03), 0 12px 30px -18px rgba(0,0,0,.35);
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+    cursor:pointer;
+    min-height:260px;
+  }
+  .format{
+    align-self:flex-start;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.04em;
+    color:var(--accent);
+    background:color-mix(in srgb, var(--accent) 14%, transparent);
+    padding:5px 11px;
+    border-radius:100px;
+  }
+  .expr{flex:1;display:flex;align-items:center;justify-content:center;min-width:0;}
+  .expr-inner{
+    text-align:center;
+    font-size:clamp(18px,5.6vw,34px);
+    line-height:1.7;
+    max-width:100%;
+  }
+  .op{color:var(--accent);font-weight:700;padding:0 .16em;white-space:nowrap;}
+  .frac{display:inline-block;white-space:nowrap;}
+  .frac .slash{color:var(--muted);padding:0 .1em;}
+  .paren{color:var(--muted);}
+  .q-mark{white-space:nowrap;color:var(--muted);}
+
+  .answer-wrap{display:flex;align-items:center;justify-content:center;min-height:62px;}
+  .answer{
+    font-size:clamp(28px,9vw,50px);
+    font-weight:700;
+    color:var(--accent2);
+    opacity:0;
+    transform:translateY(6px) scale(.98);
+    transition:opacity .18s ease, transform .18s ease;
+  }
+  .answer.shown{opacity:1;transform:translateY(0) scale(1);}
+  .hint{font-size:12px;color:var(--muted);text-align:center;}
+
+  .dock{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:8px;}
+  .dock button{
+    font-weight:700;
+    font-size:15px;
+    padding:15px 6px;
+    border-radius:12px;
+    border:1px solid var(--groove);
+    background:var(--surface);
+    color:var(--ink);
+    cursor:pointer;
+    min-height:54px;
+    -webkit-user-select:none;
+    user-select:none;
+  }
+  .dock button:active{transform:translateY(1px);}
+  .dock .primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
+  .dock button:disabled{opacity:.35;cursor:default;}
+  button:focus-visible, .card:focus-visible{outline:2px solid rgba(var(--ring),.6);outline-offset:2px;}
+
+  @media (prefers-reduced-motion:reduce){ .answer{transition:none;} }
+  @media (max-width:380px){
+    .page{padding-left:12px;padding-right:12px;gap:10px;}
+    .card{gap:16px;min-height:230px;}
+    .dock button{font-size:14px;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div>
+      <div class="eyebrow sans">Simple mode</div>
+      <h1 class="sans">Mental Math <em>Blitz</em></h1>
+    </div>
+    <div class="tools sans">
+      <select id="deckSize" aria-label="Deck size">
+        <option value="100">100 questions</option>
+        <option value="200" selected>200 questions</option>
+        <option value="400">400 questions</option>
+        <option value="1000">1,000 questions</option>
+      </select>
+      <button class="icon-btn" id="regenBtn" title="New random deck" aria-label="New random deck">&#8635;</button>
+    </div>
+  </header>
+
+  <div class="progress sans">
+    <div class="rail" role="progressbar" aria-label="Deck progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="rail"><div id="railFill"></div></div>
+    <div class="counter"><span class="mono" id="counterLeft">Question 1 / 200</span><span id="counterRight"></span></div>
+  </div>
+
+  <div class="stage">
+    <div class="card" id="card" role="button" tabindex="0" aria-label="Tap to reveal the answer">
+      <span class="format sans mono">2d &times; (6d &divide; 5d) + 3d</span>
+      <div class="expr" id="expr"></div>
+      <div class="answer-wrap"><div class="answer mono" id="answer"></div></div>
+      <div class="hint sans" id="hint">Tap the card, or press Space, to reveal</div>
+    </div>
+  </div>
+
+  <div class="dock sans">
+    <button id="prevBtn" aria-label="Previous question">&#8592; Prev</button>
+    <button class="primary" id="revealBtn">Reveal</button>
+    <button id="nextBtn" aria-label="Next question">Next &#8594;</button>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+  function fmt(n){ return n.toLocaleString('en-US'); }
+
+  /*
+    2d x (6d / 5d) + 3d
+      - 6d / 5d divides exactly and gives a single digit (2-9)
+      - the 3-digit number divides the 5-digit number exactly, and the
+        quotient is always above 20
+  */
+  function generate(){
+    for (;;){
+      var c = randInt(100,999);                      // the 3-digit number added at the end
+      var kMin = Math.max(21, Math.ceil(11112 / c)); // 5d / 3d is always above 20
+      var kMax = Math.floor(99999 / c);
+      if (kMin > kMax) continue;
+      var d5 = c * randInt(kMin, kMax);              // 5-digit, divisible by c
+      var qMin = Math.max(2, Math.ceil(100000 / d5));
+      var qMax = Math.min(9, Math.floor(999999 / d5));
+      if (qMin > qMax) continue;
+      var q  = randInt(qMin, qMax);                  // single-digit answer to 6d / 5d
+      var n6 = d5 * q;                               // 6-digit
+      var m  = randInt(10,99);                       // the 2-digit multiplier
+      return { m:m, n6:n6, d5:d5, c:c, q:q, ans:m*q + c };
+    }
+  }
+
+  function html(p){
+    return fmt(p.m)
+      + '<span class="op">&times;</span>'
+      + '<span class="frac"><span class="paren">(</span>' + fmt(p.n6)
+      + '<span class="slash"> / </span>' + fmt(p.d5) + '<span class="paren">)</span></span>'
+      + '<span class="op">+</span>' + fmt(p.c)
+      + '<span class="q-mark"> = ?</span>';
+  }
+
+  var els = {
+    card: document.getElementById("card"),
+    expr: document.getElementById("expr"),
+    answer: document.getElementById("answer"),
+    hint: document.getElementById("hint"),
+    counterLeft: document.getElementById("counterLeft"),
+    counterRight: document.getElementById("counterRight"),
+    rail: document.getElementById("rail"),
+    railFill: document.getElementById("railFill"),
+    deckSize: document.getElementById("deckSize"),
+    regenBtn: document.getElementById("regenBtn"),
+    prevBtn: document.getElementById("prevBtn"),
+    nextBtn: document.getElementById("nextBtn"),
+    revealBtn: document.getElementById("revealBtn")
+  };
+
+  var deck = [];
+  var index = 0;
+  var revealed = false;
+
+  function newDeck(){
+    var n = parseInt(els.deckSize.value, 10);
+    deck = [];
+    for (var i = 0; i < n; i++) deck.push(generate());
+    index = 0; revealed = false; render();
+  }
+
+  function render(){
+    var p = deck[index], total = deck.length, last = index === total - 1;
+    els.expr.innerHTML = '<span class="expr-inner mono">' + html(p) + '</span>';
+    els.answer.textContent = fmt(p.ans);
+    els.answer.classList.toggle("shown", revealed);
+    els.hint.textContent = revealed ? "" : "Tap the card, or press Space, to reveal";
+    els.counterLeft.textContent = "Question " + fmt(index + 1) + " / " + fmt(total);
+    els.counterRight.textContent = last ? "Last one!" : fmt(total - index - 1) + " to go";
+    var pct = Math.round(((index + 1) / total) * 100);
+    els.railFill.style.width = pct + "%";
+    els.rail.setAttribute("aria-valuenow", pct);
+    els.prevBtn.disabled = index === 0;
+    els.nextBtn.innerHTML = last ? "New deck &#8635;" : "Next &#8594;";
+    els.revealBtn.textContent = revealed ? "Hide" : "Reveal";
+  }
+
+  function toggle(){ revealed = !revealed; render(); }
+  function next(){
+    if (index === deck.length - 1){ newDeck(); return; }
+    index++; revealed = false; render();
+  }
+  function prev(){ if (index > 0){ index--; revealed = false; render(); } }
+
+  els.card.addEventListener("click", toggle);
+  els.card.addEventListener("keydown", function(e){ if (e.key === "Enter"){ toggle(); } });
+  els.revealBtn.addEventListener("click", toggle);
+  els.nextBtn.addEventListener("click", next);
+  els.prevBtn.addEventListener("click", prev);
+  els.regenBtn.addEventListener("click", newDeck);
+  els.deckSize.addEventListener("change", newDeck);
+
+  document.addEventListener("keydown", function(e){
+    if (e.code === "Space"){ e.preventDefault(); toggle(); }
+    else if (e.key === "ArrowRight"){ next(); }
+    else if (e.key === "ArrowLeft"){ prev(); }
+  });
+
+  var startX = null;
+  els.card.addEventListener("touchstart", function(e){ startX = e.changedTouches[0].clientX; }, {passive:true});
+  els.card.addEventListener("touchend", function(e){
+    if (startX === null) return;
+    var dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 60){ if (dx < 0) next(); else prev(); }
+    startX = null;
+  }, {passive:true});
+
+  newDeck();
+})();
+</script>
+</body>
+</html>
