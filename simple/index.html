@@ -78,34 +78,56 @@
     letter-spacing:-.01em;
   }
   h1 em{font-style:normal;color:var(--accent);}
-  .tools{display:flex;align-items:center;gap:8px;}
-  select{
-    font-size:12.5px;
-    font-weight:600;
-    padding:8px 10px;
-    border-radius:8px;
-    border:1px solid var(--groove);
+  /* random generator panel */
+  .generator{
     background:var(--surface);
-    color:var(--ink);
+    border:1px solid var(--groove);
+    border-radius:16px;
+    padding:14px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
   }
-  .icon-btn{
-    display:inline-flex;align-items:center;justify-content:center;
-    width:36px;height:36px;border-radius:8px;
-    border:1px solid var(--groove);background:var(--surface);color:var(--ink);
-    cursor:pointer;font-size:16px;
+  .gen-row{display:flex;align-items:center;gap:14px;}
+  .gen-btn{
+    flex:1;
+    font-weight:800;
+    font-size:16px;
+    letter-spacing:.01em;
+    padding:0 18px;
+    min-height:56px;
+    border-radius:12px;
+    border:1px solid var(--accent);
+    background:var(--accent);
+    color:var(--accent-ink);
+    cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;gap:10px;
+    -webkit-user-select:none;
+    user-select:none;
   }
-  .icon-btn:hover{border-color:var(--accent);}
-  select:focus-visible{outline:2px solid rgba(var(--ring),.6);outline-offset:2px;}
-
-  .progress{display:flex;flex-direction:column;gap:6px;}
-  .rail{height:6px;background:var(--groove);border-radius:3px;overflow:hidden;}
-  .rail > div{height:100%;width:0;background:var(--accent);border-radius:3px;transition:width .25s ease;}
-  .counter{
-    display:flex;justify-content:space-between;
-    font-size:12px;
+  .gen-btn:active{transform:translateY(1px);}
+  .gen-btn .spin{display:inline-block;font-size:19px;line-height:1;}
+  .gen-btn.rolling .spin{animation:spin .6s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .gen-stat{
+    display:flex;flex-direction:column;align-items:flex-end;gap:2px;
+    min-width:84px;
+  }
+  .gen-stat .n{font-size:26px;font-weight:700;line-height:1;}
+  .gen-stat .l{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+  .rules{display:flex;flex-wrap:wrap;gap:6px;}
+  .rule{
+    font-size:11px;
     font-weight:600;
     color:var(--muted);
+    background:var(--bg);
+    border:1px solid var(--groove);
+    padding:4px 9px;
+    border-radius:100px;
+    white-space:nowrap;
   }
+  .rule b{color:var(--accent);font-weight:700;}
+  .rolling-text .expr-inner{opacity:.45;}
 
   .stage{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;}
   .card{
@@ -191,25 +213,26 @@
       <div class="eyebrow sans">Simple mode</div>
       <h1 class="sans">Mental Math <em>Blitz</em></h1>
     </div>
-    <div class="tools sans">
-      <select id="deckSize" aria-label="Deck size">
-        <option value="100">100 questions</option>
-        <option value="200" selected>200 questions</option>
-        <option value="400">400 questions</option>
-        <option value="1000">1,000 questions</option>
-      </select>
-      <button class="icon-btn" id="regenBtn" title="New random deck" aria-label="New random deck">&#8635;</button>
-    </div>
   </header>
 
-  <div class="progress sans">
-    <div class="rail" role="progressbar" aria-label="Deck progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="rail"><div id="railFill"></div></div>
-    <div class="counter"><span class="mono" id="counterLeft">Question 1 / 200</span><span id="counterRight"></span></div>
-  </div>
+  <section class="generator sans" aria-label="Random question generator">
+    <div class="gen-row">
+      <button class="gen-btn" id="genBtn" type="button"><span class="spin" aria-hidden="true">&#8635;</span><span id="genLabel">Generate question</span></button>
+      <div class="gen-stat" aria-live="polite">
+        <span class="n mono" id="genCount">0</span>
+        <span class="l">generated</span>
+      </div>
+    </div>
+    <div class="rules">
+      <span class="rule mono"><b>2d</b> &times; (<b>6d</b> &divide; <b>5d</b>) + <b>3d</b></span>
+      <span class="rule">6d &divide; 5d is a single digit</span>
+      <span class="rule">3d divides 5d, over 20 times</span>
+      <span class="rule">fresh random numbers every time</span>
+    </div>
+  </section>
 
   <div class="stage">
     <div class="card" id="card" role="button" tabindex="0" aria-label="Tap to reveal the answer">
-      <span class="format sans mono">2d &times; (6d &divide; 5d) + 3d</span>
       <div class="expr" id="expr"></div>
       <div class="answer-wrap"><div class="answer mono" id="answer"></div></div>
       <div class="hint sans" id="hint">Tap the card, or press Space, to reveal</div>
@@ -268,63 +291,83 @@
     expr: document.getElementById("expr"),
     answer: document.getElementById("answer"),
     hint: document.getElementById("hint"),
-    counterLeft: document.getElementById("counterLeft"),
-    counterRight: document.getElementById("counterRight"),
-    rail: document.getElementById("rail"),
-    railFill: document.getElementById("railFill"),
-    deckSize: document.getElementById("deckSize"),
-    regenBtn: document.getElementById("regenBtn"),
+    genBtn: document.getElementById("genBtn"),
+    genLabel: document.getElementById("genLabel"),
+    genCount: document.getElementById("genCount"),
     prevBtn: document.getElementById("prevBtn"),
     nextBtn: document.getElementById("nextBtn"),
     revealBtn: document.getElementById("revealBtn")
   };
 
-  var deck = [];
-  var index = 0;
+  var history = [];      // every question generated this session, newest last
+  var index = -1;
   var revealed = false;
+  var rolling = null;    // timer while the roll animation runs
 
-  function newDeck(){
-    var n = parseInt(els.deckSize.value, 10);
-    deck = [];
-    for (var i = 0; i < n; i++) deck.push(generate());
-    index = 0; revealed = false; render();
+  function reducedMotion(){
+    return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   }
 
   function render(){
-    var p = deck[index], total = deck.length, last = index === total - 1;
+    var p = history[index];
     els.expr.innerHTML = '<span class="expr-inner mono">' + html(p) + '</span>';
     els.answer.textContent = fmt(p.ans);
     els.answer.classList.toggle("shown", revealed);
     els.hint.textContent = revealed ? "" : "Tap the card, or press Space, to reveal";
-    els.counterLeft.textContent = "Question " + fmt(index + 1) + " / " + fmt(total);
-    els.counterRight.textContent = last ? "Last one!" : fmt(total - index - 1) + " to go";
-    var pct = Math.round(((index + 1) / total) * 100);
-    els.railFill.style.width = pct + "%";
-    els.rail.setAttribute("aria-valuenow", pct);
-    els.prevBtn.disabled = index === 0;
-    els.nextBtn.innerHTML = last ? "New deck &#8635;" : "Next &#8594;";
+    els.genCount.textContent = fmt(history.length);
+    els.prevBtn.disabled = index <= 0;
     els.revealBtn.textContent = revealed ? "Hide" : "Reveal";
   }
 
-  function toggle(){ revealed = !revealed; render(); }
-  function next(){
-    if (index === deck.length - 1){ newDeck(); return; }
-    index++; revealed = false; render();
+  function settle(p){
+    rolling = null;
+    els.genBtn.classList.remove("rolling");
+    els.card.classList.remove("rolling-text");
+    els.genLabel.textContent = "Generate question";
+    history.push(p);
+    index = history.length - 1;
+    revealed = false;
+    render();
   }
-  function prev(){ if (index > 0){ index--; revealed = false; render(); } }
+
+  // Roll a few random questions on screen, then land on the real one.
+  function generateNew(){
+    if (rolling) return;
+    var p = generate();
+    if (reducedMotion() || index < 0){ settle(p); return; }
+    revealed = false;
+    els.answer.classList.remove("shown");
+    els.hint.textContent = "";
+    els.genBtn.classList.add("rolling");
+    els.card.classList.add("rolling-text");
+    els.genLabel.textContent = "Rolling…";
+    var ticks = 0;
+    rolling = setInterval(function(){
+      els.expr.innerHTML = '<span class="expr-inner mono">' + html(generate()) + '</span>';
+      if (++ticks >= 10){ clearInterval(rolling); settle(p); }
+    }, 60);
+  }
+
+  function toggle(){ if (rolling) return; revealed = !revealed; render(); }
+  function next(){
+    if (rolling) return;
+    if (index < history.length - 1){ index++; revealed = false; render(); }
+    else generateNew();
+  }
+  function prev(){ if (rolling) return; if (index > 0){ index--; revealed = false; render(); } }
 
   els.card.addEventListener("click", toggle);
   els.card.addEventListener("keydown", function(e){ if (e.key === "Enter"){ toggle(); } });
   els.revealBtn.addEventListener("click", toggle);
+  els.genBtn.addEventListener("click", generateNew);
   els.nextBtn.addEventListener("click", next);
   els.prevBtn.addEventListener("click", prev);
-  els.regenBtn.addEventListener("click", newDeck);
-  els.deckSize.addEventListener("change", newDeck);
 
   document.addEventListener("keydown", function(e){
     if (e.code === "Space"){ e.preventDefault(); toggle(); }
     else if (e.key === "ArrowRight"){ next(); }
     else if (e.key === "ArrowLeft"){ prev(); }
+    else if (e.key === "g" || e.key === "n"){ generateNew(); }
   });
 
   var startX = null;
@@ -336,7 +379,7 @@
     startX = null;
   }, {passive:true});
 
-  newDeck();
+  generateNew();
 })();
 </script>
 </body>
